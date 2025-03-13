@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.time.LocalDate;
 
-
 public class DisasterVictim {
     private static int counter = 0;
 
@@ -23,8 +22,15 @@ public class DisasterVictim {
     private ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();
     private Supply[] personalBelongings;
     private final String ENTRY_DATE;
-    private String gender;
+    private Gender gender; // Changed from String to Gender enum
     private String comments;
+
+    // Gender enum definition
+    public enum Gender {
+        MAN,
+        WOMAN,
+        NON_BINARY
+    }
 
     public DisasterVictim(String firstName, String ENTRY_DATE) throws IllegalArgumentException {
         this.firstName = firstName;
@@ -45,7 +51,6 @@ public class DisasterVictim {
         setDateOfBirth(dateOfBirth);
     }
 
-
     private static int generateSocialID() {
         counter++;
         return counter;
@@ -59,12 +64,11 @@ public class DisasterVictim {
     private static int convertDateStringToInt(String dateStr) {
         // Use regex to remove dashes from the date string
         String formattedDate = dateStr.replaceAll("-", "");
-        
+
         // Convert the formatted string to an integer
         return Integer.parseInt(formattedDate);
     }
 
-  
     // Getters and setters
 
     public String getFirstName() {
@@ -98,7 +102,7 @@ public class DisasterVictim {
         if (birthDate > entryDate) {
             throw new IllegalArgumentException("Birthdate must be the same as or before entry date");
         }
-        
+
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -106,7 +110,7 @@ public class DisasterVictim {
         return ASSIGNED_SOCIAL_ID;
     }
 
-  public FamilyRelation[] getFamilyConnections() {
+    public FamilyRelation[] getFamilyConnections() {
         return familyConnections.toArray(new FamilyRelation[0]);
     }
 
@@ -119,7 +123,7 @@ public class DisasterVictim {
     }
 
     // The add and remove methods remain correct.
-    
+
     // Correct the setters to accept Lists instead of arrays
     public void setFamilyConnections(FamilyRelation[] connections) {
         this.familyConnections.clear();
@@ -141,7 +145,6 @@ public class DisasterVictim {
 
     // Add a Supply to personalBelonging
     public void addPersonalBelonging(Supply supply) {
-
         if (this.personalBelongings == null) {
             Supply tmpSupply[] = { supply };
             this.setPersonalBelongings(tmpSupply);
@@ -154,7 +157,7 @@ public class DisasterVictim {
 
         // Copy all the items in the current array to the new array
         int i;
-        for (i=0; i < personalBelongings.length; i++) {
+        for (i = 0; i < personalBelongings.length; i++) {
             tmpPersonalBelongings[i] = this.personalBelongings[i];
         }
 
@@ -167,7 +170,7 @@ public class DisasterVictim {
 
     // Remove a Supply from personalBelongings, we assume it only appears once
     public void removePersonalBelonging(Supply unwantedSupply) {
-        Supply[] updatedBelongings = new Supply[personalBelongings.length-1];
+        Supply[] updatedBelongings = new Supply[personalBelongings.length - 1];
         int index = 0;
         int newIndex = index;
         for (Supply supply : personalBelongings) {
@@ -187,7 +190,6 @@ public class DisasterVictim {
         familyConnections.add(record);
     }
 
-
     // Add a MedicalRecord to medicalRecords
     public void addMedicalRecord(MedicalRecord record) {
         medicalRecords.add(record);
@@ -202,24 +204,24 @@ public class DisasterVictim {
     }
 
     public void setComments(String comments) {
-        this.comments =  comments;
+        this.comments = comments;
     }
 
-    public String getGender() {
+    // Updated getter and setter for gender using the Gender enum
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) throws IllegalArgumentException {
-        if (!gender.matches("(?i)^(male|female|other)$")) {
-            throw new IllegalArgumentException("Invalid gender. Acceptable values are male, female, or other.");
-        }
-        this.gender = gender.toLowerCase(); // Store in a consistent format
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
-   
+    // Overloaded setGender method to accept a String and convert it to the Gender enum
+    public void setGender(String gender) throws IllegalArgumentException {
+        try {
+            this.gender = Gender.valueOf(gender.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid gender. Acceptable values are MAN, WOMAN, or NON_BINARY.");
+        }
+    }
 }
-
-
-
-
-
